@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-30T22:59:55.359Z",
+  "source": "Riot Match-V5, Ranked Solo/Duo, participants Master+ actuels",
+  "region": "Global",
+  "queueId": 420,
+  "recentDays": 45,
+  "patch": "16.19",
+  "sampledAccounts": 165,
+  "sampledGames": 480,
+  "roles": {
+    "TOP": {
+      "csm": 7.5,
+      "gpm": 415,
+      "kp": 36.3,
+      "visionPerMin": 0.9,
+      "sampleSize": 103,
+      "matches": 103
+    },
+    "JUNGLE": {
+      "csm": 7.4,
+      "gpm": 486,
+      "kp": 54.1,
+      "visionPerMin": 1,
+      "sampleSize": 59,
+      "matches": 59
+    },
+    "MIDDLE": {
+      "csm": 7.5,
+      "gpm": 440,
+      "kp": 45.6,
+      "visionPerMin": 0.7,
+      "sampleSize": 133,
+      "matches": 133
+    },
+    "BOTTOM": {
+      "csm": 8.2,
+      "gpm": 508,
+      "kp": 46.7,
+      "visionPerMin": 0.7,
+      "sampleSize": 122,
+      "matches": 121
+    },
+    "UTILITY": {
+      "csm": 1.1,
+      "gpm": 318,
+      "kp": 58.1,
+      "visionPerMin": 2.7,
+      "sampleSize": 89,
+      "matches": 88
+    }
+  },
+  "platforms": [
+    "BR1",
+    "EUN1",
+    "EUW1",
+    "JP1",
+    "KR",
+    "LA1",
+    "LA2",
+    "NA1",
+    "OC1",
+    "RU",
+    "TR1"
+  ]
+}
