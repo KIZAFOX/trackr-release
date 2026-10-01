@@ -1,53 +1,53 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-30T22:59:55.359Z",
+  "generatedAt": "2026-10-01T15:18:07.753Z",
   "source": "Riot Match-V5, Ranked Solo/Duo, participants Master+ actuels",
   "region": "Global",
   "queueId": 420,
   "recentDays": 45,
   "patch": "16.19",
   "sampledAccounts": 165,
-  "sampledGames": 480,
+  "sampledGames": 479,
   "roles": {
     "TOP": {
-      "csm": 7.5,
+      "csm": 7.4,
       "gpm": 415,
-      "kp": 36.3,
-      "visionPerMin": 0.9,
-      "sampleSize": 103,
-      "matches": 103
+      "kp": 36.5,
+      "visionPerMin": 0.8,
+      "sampleSize": 83,
+      "matches": 82
     },
     "JUNGLE": {
       "csm": 7.4,
-      "gpm": 486,
-      "kp": 54.1,
+      "gpm": 476,
+      "kp": 52.7,
       "visionPerMin": 1,
-      "sampleSize": 59,
-      "matches": 59
+      "sampleSize": 101,
+      "matches": 100
     },
     "MIDDLE": {
       "csm": 7.5,
-      "gpm": 440,
-      "kp": 45.6,
-      "visionPerMin": 0.7,
-      "sampleSize": 133,
-      "matches": 133
+      "gpm": 445,
+      "kp": 44.1,
+      "visionPerMin": 0.8,
+      "sampleSize": 120,
+      "matches": 117
     },
     "BOTTOM": {
-      "csm": 8.2,
-      "gpm": 508,
-      "kp": 46.7,
+      "csm": 8.1,
+      "gpm": 505,
+      "kp": 47.3,
       "visionPerMin": 0.7,
-      "sampleSize": 122,
-      "matches": 121
+      "sampleSize": 111,
+      "matches": 107
     },
     "UTILITY": {
       "csm": 1.1,
-      "gpm": 318,
-      "kp": 58.1,
-      "visionPerMin": 2.7,
-      "sampleSize": 89,
-      "matches": 88
+      "gpm": 312,
+      "kp": 57.2,
+      "visionPerMin": 3,
+      "sampleSize": 111,
+      "matches": 111
     }
   },
   "platforms": [
