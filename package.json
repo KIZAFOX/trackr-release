@@ -1,9 +1,10 @@
 {
   "name": "Trackr",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Trackr c'est comme DPM.gg mais gratuit à 100%",
   "main": "main.js",
   "scripts": {
+    "test": "node --test",
     "start": "electron .",
     "dist": "electron-builder",
     "release": "electron-builder --publish always"
@@ -20,8 +21,16 @@
       "icon": "build/icon.ico"
     },
     "files": [
-      "**/*",
-      "!node_modules/electron-builder/**"
+      "assets/**/*",
+      "dashboard/**/*",
+      "main.js",
+      "overlay/**/*",
+      "package.json",
+      "preload.js",
+      "recorder/**/*",
+      "src/**/*",
+      "splash/**/*",
+      "!**/*.map"
     ],
     "publish": [
       {
@@ -33,6 +42,7 @@
     ]
   },
   "dependencies": {
+    "dotenv": "^18.0.5",
     "electron-updater": "^6.8.9"
   }
 }
