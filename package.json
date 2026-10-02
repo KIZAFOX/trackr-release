@@ -1,14 +1,15 @@
 {
   "name": "Trackr",
   "author": "KIZAFOX",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Trackr c'est comme DPM.gg mais gratuit à 100%",
   "main": "main.js",
   "scripts": {
     "test": "node --test",
     "start": "electron .",
-    "dist": "electron-builder",
-    "release": "electron-builder --publish always"
+    "dist": "electron-builder --publish never",
+    "release": "node -e \"const token = process.env.GH_TOKEN || process.env.GITHUB_TOKEN; const cert = process.env.CSC_LINK; const password = process.env.CSC_KEY_PASSWORD; if (!token) { console.error('Missing GH_TOKEN/GITHUB_TOKEN. Use: $env:GH_TOKEN=... then npm run release'); process.exit(1); } if (!cert || !password) { console.error('Missing Windows signing variables. Set CSC_LINK and CSC_KEY_PASSWORD before running release.'); process.exit(1); }\" && electron-builder --publish always",
+    "release:local": "electron-builder --publish never"
   },
   "devDependencies": {
     "electron": "^31.0.0",
@@ -19,7 +20,12 @@
     "productName": "Trackr",
     "win": {
       "target": "nsis",
-      "icon": "build/icon.ico"
+      "icon": "build/icon.ico",
+      "publisherName": "KIZAFOX",
+      "sign": "scripts/sign-win.js",
+      "signingHashAlgorithms": [
+        "sha256"
+      ]
     },
     "files": [
       "assets/**/*",
@@ -44,6 +50,7 @@
   },
   "dependencies": {
     "dotenv": "^18.0.5",
+    "electron-log": "^5.4.4",
     "electron-updater": "^6.8.9"
   }
 }
