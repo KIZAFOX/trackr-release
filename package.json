@@ -1,44 +1,82 @@
 {
-  "name": "Trackr",
+  "name": "trackr",
+  "productName": "Trackr",
   "author": "KIZAFOX",
-  "version": "0.1.3",
-  "description": "Trackr c'est comme DPM.gg mais gratuit à 100%",
-  "main": "main.js",
+  "version": "0.1.4",
+  "description": "Trackr, c'est comme DPM.gg mais gratuit à 100 %",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "src/main/index.js",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "test": "node --test",
     "start": "electron .",
-    "dist": "electron-builder --publish never",
-    "release": "node -e \"const token = process.env.GH_TOKEN || process.env.GITHUB_TOKEN; const cert = process.env.CSC_LINK; const password = process.env.CSC_KEY_PASSWORD; if (!token) { console.error('Missing GH_TOKEN/GITHUB_TOKEN. Use: $env:GH_TOKEN=... then npm run release'); process.exit(1); } if (!cert || !password) { console.error('Missing Windows signing variables. Set CSC_LINK and CSC_KEY_PASSWORD before running release.'); process.exit(1); }\" && electron-builder --publish always",
-    "release:local": "electron-builder --publish never"
+    "test": "node --test",
+    "dist": "node -r dotenv/config ./node_modules/electron-builder/cli.js --publish never",
+    "release:local": "node -r dotenv/config ./node_modules/electron-builder/cli.js --publish never",
+    "release": "node -r dotenv/config tools/check-release-env.js && node -r dotenv/config ./node_modules/electron-builder/cli.js --publish always"
+  },
+  "dependencies": {
+    "electron-log": "^5.4.4",
+    "electron-updater": "^6.8.9"
   },
   "devDependencies": {
-    "electron": "^31.0.0",
-    "electron-builder": "^24.13.3"
+    "dotenv": "^18.0.5",
+    "electron": "^44.6.0",
+    "electron-builder": "^26.5.0"
   },
   "build": {
     "appId": "fr.kiza.trackr",
     "productName": "Trackr",
-    "win": {
-      "target": "nsis",
-      "icon": "build/icon.ico",
-      "publisherName": "KIZAFOX",
-      "sign": "scripts/sign-win.js",
-      "signingHashAlgorithms": [
-        "sha256"
-      ]
-    },
+    "copyright": "Copyright © KIZAFOX",
+    "npmRebuild": false,
+    "compression": "maximum",
+    "electronLanguages": [
+      "fr",
+      "en-US"
+    ],
     "files": [
-      "assets/**/*",
-      "dashboard/**/*",
-      "main.js",
-      "overlay/**/*",
       "package.json",
-      "preload.js",
-      "recorder/**/*",
+      "assets/**/*",
       "src/**/*",
-      "splash/**/*",
       "!**/*.map"
     ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "signtoolOptions": {
+        "publisherName": "KIZAFOX",
+        "sign": "tools/sign-win.js",
+        "signingHashAlgorithms": [
+          "sha256"
+        ]
+      }
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Trackr",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false,
+      "language": "1036",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "installerHeaderIcon": "build/icon.ico",
+      "include": "build/installer.nsh",
+      "artifactName": "Trackr-Setup-${version}.${ext}"
+    },
     "publish": [
       {
         "provider": "github",
@@ -47,10 +85,5 @@
         "releaseType": "release"
       }
     ]
-  },
-  "dependencies": {
-    "dotenv": "^18.0.5",
-    "electron-log": "^5.4.4",
-    "electron-updater": "^6.8.9"
   }
 }
