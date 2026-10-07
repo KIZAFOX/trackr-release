@@ -13,48 +13,47 @@ quelques outils autour des sessions et des clips.
 - **Overlay en jeu** : CS/min, gold/min, kill participation, vision/min,
   timers d’objectifs et estimation de différence de gold.
 - **Fin de partie** : résultat, statistiques et historique de session.
+- **Historique** : filtres par session, champion, file et résultat, avec comparaison des performances entre sessions.
 - **Clips** : capture d’événements ou d’une partie entière, avec lecture dans
   le dashboard.
 - **Réglages** : affichage des blocs de l’overlay, clips, compte League et
   préférences générales.
 
-## Démarrage
+## Installation
+
+Le guide utilisateur et mainteneur est dans [docs/INSTALLATION.md](docs/INSTALLATION.md).
+Il couvre l'installateur Windows, les mises à jour, le dépannage, `.env` local
+et le flux de publication.
+
+## Démarrage en développement
 
 Trackr cible Windows : la détection du client utilise la ligne de commande de
 `LeagueClientUx.exe`.
 
-Prérequis : Node.js et npm installés.
+Prérequis : Node.js 20+ et npm installés.
 
 ```powershell
 npm install
 npm start
 ```
 
-Pour les statistiques Riot enrichies en développement, ajoute `RIOT_API_KEY`
-et `DEFAULT_REGION` dans un fichier `.env` à la racine du projet. Le fichier
-`.env` est ignoré par Git et ne doit jamais être ajouté à une release. Sans clé,
-le dashboard et les infos de base de partie restent utilisables, mais les
-rangs et maîtrises détaillés ne sont pas disponibles.
+Pour les statistiques Riot enrichies, copie `.env.example` vers `.env` à la racine
+et renseigne `RIOT_API_KEY` et `DEFAULT_REGION`. Le fichier `.env` est ignoré par
+Git et n'est jamais embarqué dans l'installeur. Sans clé, le dashboard et les
+infos de base de partie restent utilisables, mais les rangs et maîtrises
+détaillés ne sont pas disponibles.
 
-## Construire l’application
-
-Pour créer l’installeur Windows :
+## Construire l'application
 
 ```powershell
-npm run dist
+npm run dist      # installeur Windows dans dist/, sans publication
+npm run release   # build + publication GitHub (GH_TOKEN, CSC_LINK, CSC_KEY_PASSWORD requis)
 ```
 
-Le résultat est placé dans `dist/`. La construction Windows doit être faite
-sous Windows ou sur une machine CI Windows.
-
-Pour publier une release, incrémente `version` dans `package.json`, puis lance :
-
-```powershell
-npm run release
-```
-
-Cette commande utilise `electron-builder` et demande un `GH_TOKEN` autorisé à
-publier dans `KIZAFOX/trackr-release`.
+Incrémente `version` dans `package.json` avant une release. La construction doit
+se faire sous Windows (ou une CI Windows). L'installeur est un assistant NSIS :
+choix du dossier d'installation, puis écran de progression avec la liste des
+fichiers copiés (voir `build/installer.nsh` et la section `build.nsis` de `package.json`).
 
 ## Benchmarks
 
@@ -64,27 +63,41 @@ GitHub Actions les régénère chaque lundi. Il vit dans le dépôt privé
 `KIZAFOX/trackr-benchmark-automation` ; seul `benchmarks.json` est publié sur
 la branche `gh-pages` de `KIZAFOX/trackr-release`.
 
-Trackr télécharge le JSON au démarrage et en garde une copie locale pour
-continuer à fonctionner hors ligne. Les benchmarks sont des moyennes de fin
-de partie, pas des courbes détaillées par minute. Les clés Riot de développement
-expirent après 24 heures ; le workflow utilise une clé durable.
+Trackr télécharge le JSON au démarrage puis toutes les 12 h, et en garde une copie
+locale pour continuer à fonctionner hors ligne. Les benchmarks sont des moyennes de
+fin de partie, pas des courbes détaillées par minute.
+
+Le dépôt d'automatisation se clone dans `benchmark-automation/` (dossier ignoré par
+Git, hors de l'application et de l'installeur) :
+
+```powershell
+git clone https://github.com/KIZAFOX/trackr-benchmark-automation.git benchmark-automation
+```
 
 ## Structure
 
 ```text
-dashboard/   Interface principale et styles
-overlay/     Overlay transparent en jeu
-recorder/    Capture des clips
-splash/      Écran et état de démarrage
-src/         Accès Riot, logique de partie et IPC Electron
-test/        Tests automatisés
-scripts/     Clone local du dépôt privé d’automatisation des benchmarks
-main.js      Cycle de vie Electron et orchestration des fenêtres
-preload.js   API sécurisée entre Electron et l’interface
+src/
+  main/            Process principal Electron
+    index.js         Point d'entrée : cycle de vie et assemblage
+    settings.js      Réglages (fusion profonde, écriture atomique)
+    liveGame.js      Boucle « partie en cours » : overlay + déclencheurs de clips
+    benchmarkSync.js Benchmarks distants + cache local
+    updater.js       Mises à jour automatiques
+    windows/         Une fabrique par fenêtre (splash, dashboard, overlay, recorder, tray)
+    ipc/             Routes IPC par domaine (app, préférences, clips, client League, joueurs live)
+  preload/         Ponts sécurisés renderer <-> main (un par type de fenêtre)
+  core/            Logique métier sans Electron (testable seule)
+    riot/            API locale du client (lcu), API publique Riot + Data Dragon (external)
+    gameflowWatcher, champSelect, endOfGame, liveStats, livePlayers, benchmarks...
+  shared/          Modules UMD utilisés à la fois par Node et par les pages (positions, historique, phases)
+  renderer/        Interfaces : dashboard/, overlay/, splash/, recorder/
+assets/            Icône de l'application
+build/             Icône Windows (.ico) et script NSIS de l'installeur
+tools/             Signature Windows, vérification de release, mesure de performance
+test/              Tests automatisés (node --test)
+docs/              Installation, checklist de release, TODO
 ```
-
-Le dossier `scripts/` est un dépôt Git séparé et ignoré par le dépôt Trackr.
-Il ne fait pas partie de l’application ni de son installeur.
 
 ## Vérifications
 
@@ -93,6 +106,8 @@ npm test
 ```
 
 ## Notes techniques
+
+- Une seule instance de Trackr tourne à la fois : relancer l'app ramène le dashboard au premier plan.
 
 - Les données live viennent de l’API locale Riot `https://127.0.0.1:2999`.
 - La différence de gold des autres joueurs est une estimation : Riot ne fournit
@@ -106,11 +121,8 @@ npm test
 
 ## Pistes pour la suite
 
-- Ajouter la date et le nombre d’observations des benchmarks dans les réglages.
-- Tester les transitions de gameflow, l’ouverture des onglets et les messages
-  du splash pour éviter les régressions.
 - Ajouter des références de benchmark par durée de partie.
 - Compléter les événements de clips (multi-kills, Ace, First Blood) et les
   timers d’objectifs.
-- Étudier le choix de l’écran de capture, les profils par mode et le partage
-  de clips vers Discord.
+- Étudier le choix de l'écran de capture, les profils par mode et le partage de
+  clips vers Discord.
