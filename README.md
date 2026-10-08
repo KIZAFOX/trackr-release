@@ -96,7 +96,7 @@ assets/            Icône de l'application
 build/             Icône Windows (.ico) et script NSIS de l'installeur
 tools/             Signature Windows, vérification de release, mesure de performance
 test/              Tests automatisés (node --test)
-docs/              Installation, checklist de release, TODO
+docs/              Installation, release, clips, TODO
 ```
 
 ## Vérifications
